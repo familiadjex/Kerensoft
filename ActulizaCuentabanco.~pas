@@ -1,0 +1,168 @@
+unit ActulizaCuentabanco;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, Buttons, ToolWin, ComCtrls, StdCtrls, ExtCtrls, Gauges;
+
+type
+  TFrm_ActulizaBanco = class(TForm)
+    Bevel2: TBevel;
+    Bevel1: TBevel;
+    Label2: TLabel;
+    StatusBar1: TStatusBar;
+    BuscarCuenta: TEdit;
+    CoolBar1: TCoolBar;
+    CoolBar2: TCoolBar;
+    SpeedButton1: TSpeedButton;
+    Bit_Buscar: TSpeedButton;
+    Bit_Pantalla: TSpeedButton;
+    SpeedButton6: TSpeedButton;
+    Gauge1: TGauge;
+    procedure Bit_BuscarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Bit_PantallaClick(Sender: TObject);
+    procedure SpeedButton6Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_ActulizaBanco: TFrm_ActulizaBanco;
+  BALANCE : Double;
+  H       : integer;
+
+implementation
+
+uses TABLAS, BUSCACUENTABANCO;
+
+{$R *.dfm}
+
+procedure TFrm_ActulizaBanco.Bit_BuscarClick(Sender: TObject);
+begin
+     Dtm.TBL_CONSULTA.SQL.Clear;
+     BuscarCuentaBanco.WBUSCAR.Clear;
+     BuscarCuentaBanco.SHOWMODAL;
+  IF BuscarCuentaBanco.ModalResult = MROK THEN
+     BEGIN
+       Dtm.TBL_CUENTA.SetKey;
+       Dtm.TBL_CUENTA['CODIGO'] := Dtm.TBL_CONSULTA['CODIGO'];
+       IF Dtm.TBL_CUENTA.GotoKey THEN
+          BEGIN
+            Dtm.TBL_CUENTA.EDIT;
+            BuscarCuenta.Text :=   Dtm.TBL_CUENTACUENTABANCO.AsString;
+          END;
+     END;
+end;
+
+procedure TFrm_ActulizaBanco.FormCreate(Sender: TObject);
+begin
+      Frm_ActulizaBanco.Top    := 97;
+      Frm_ActulizaBanco.LEFT   := 04;
+      IF NOT Dtm.TBL_CUENTA.Active THEN
+     BEGIN
+       Dtm.TBL_CUENTA.Active := TRUE;
+     END;
+
+end;
+
+procedure TFrm_ActulizaBanco.Bit_PantallaClick(Sender: TObject);
+begin
+     IF NOT Dtm.TBL_BANCO.Active THEN
+     BEGIN
+       Dtm.TBL_BANCO.Active := TRUE;
+     END;
+    IF NOT Dtm.TBL_CUENTA.Active THEN
+     BEGIN
+       Dtm.TBL_CUENTA.Active := TRUE;
+     END;
+     BALANCE := 0;
+     Dtm.TBL_CONSULTA.SQL.Clear;
+     Dtm.TBL_CONSULTA.SQL.Add('SELECT * FROM TBL_BANCO');
+     Dtm.TBL_CONSULTA.SQL.Add('WHERE CUENTABANCO =:CuentaBanco');
+     Dtm.TBL_CONSULTA.ParamByName('CuentaBanco').AsString := Frm_ActulizaBanco.BuscarCuenta.text;
+     Dtm.TBL_CONSULTA.SQL.Add('ORDER BY TRANSACION');
+     TRY
+       Dtm.TBL_CONSULTA.ACTIVE := TRUE;
+     EXCEPT
+       APPLICATION.MessageBox('Consulta Invalida','A v i s o',MB_DEFBUTTON1 + MB_ICONINFORMATION);
+     END;
+     H := 0;
+     Gauge1.Visible := TRUE;
+     Gauge1.MaxValue     := Dtm.TBL_BANCO.RecordCount;
+     Dtm.TBL_Consulta.First;
+ WHILE NOT Dtm.TBL_Consulta.Eof DO
+         BEGIN
+           Dtm.TBL_BANCO.SetKey;
+           Dtm.TBL_BANCO['TRANSACION'] := Dtm.TBL_Consulta['TRANSACION'];
+           IF Dtm.TBL_BANCO.GotoKey THEN
+              BEGIN
+                IF TRIM(Dtm.TBL_BANCOTIPOTRANSACION.AsString) = 'Deposito' THEN
+                   BEGIN
+                     TRY
+                     BALANCE := BALANCE + Dtm.TBL_Consulta['MONTO'];
+                     EXCEPT
+
+                     END;
+                     Dtm.TBL_BANCO.Edit;
+                     Dtm.TBL_BANCO['BALANCE'] := BALANCE;
+                     Dtm.TBL_BANCO.Post;
+                   END;
+                IF TRIM(Dtm.TBL_BANCOTIPOTRANSACION.AsString) = 'Retiro' THEN
+                   BEGIN
+                     TRY
+                     BALANCE := BALANCE - Dtm.TBL_Consulta['MONTO'];
+                     EXCEPT
+                     END;
+                     Dtm.TBL_BANCO.Edit;
+                     Dtm.TBL_BANCO['BALANCE'] := BALANCE;
+                     Dtm.TBL_BANCO.Post;
+                   END;
+                IF TRIM(Dtm.TBL_BANCOTIPOTRANSACION.AsString) = 'Nota Debito' THEN // sumar
+                   BEGIN
+                     TRY
+                     BALANCE := BALANCE + Dtm.TBL_Consulta['MONTO'];
+                     EXCEPT
+                     END;
+                     Dtm.TBL_BANCO.Edit;
+                     Dtm.TBL_BANCO['BALANCE'] := BALANCE;
+                     Dtm.TBL_BANCO.Post;
+                   END;
+                IF TRIM(Dtm.TBL_BANCOTIPOTRANSACION.AsString) = 'Nota Crédito' THEN // restar
+                   BEGIN
+                     TRY
+                     BALANCE := BALANCE - Dtm.TBL_Consulta['MONTO'];
+                     EXCEPT
+                     END;
+                     Dtm.TBL_BANCO.Edit;
+                     Dtm.TBL_BANCO['BALANCE'] := BALANCE;
+                     Dtm.TBL_BANCO.Post;
+                   END;
+                END;
+                H := H + 1;
+                Gauge1.Progress := H;
+                Dtm.TBL_Consulta.Next;
+         END;
+          Dtm.TBL_CUENTA.First;
+       IF Dtm.TBL_CUENTA.Locate('CUENTABANCO',Frm_ActulizaBanco.BuscarCuenta.text,[]) THEN
+          BEGIN
+            Dtm.TBL_CUENTA.EDIT;
+            Dtm.TBL_CUENTABALANCE.Value := BALANCE;
+            Dtm.TBL_CUENTA.Post;
+          END;
+         Gauge1.Visible := FALSE;
+         APPLICATION.MessageBox('Proceso Completo','A v i s o',MB_DEFBUTTON1 + MB_IconInformation);
+
+end;
+
+procedure TFrm_ActulizaBanco.SpeedButton6Click(Sender: TObject);
+begin
+   Frm_ActulizaBanco.Close;
+end;
+
+end.
+
+

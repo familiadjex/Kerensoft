@@ -1,0 +1,115 @@
+unit AUDITACOBRO;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, QRCtrls, QuickRpt, ExtCtrls, Buttons, ToolWin, ComCtrls;
+
+type
+  TFrr_CobroNoAsentado = class(TForm)
+    Bevel2: TBevel;
+    FECHA1: TDateTimePicker;
+    FECHA2: TDateTimePicker;
+    StatusBar1: TStatusBar;
+    CoolBar1: TCoolBar;
+    CoolBar2: TCoolBar;
+    SpeedButton1: TSpeedButton;
+    Bit_Buscar: TSpeedButton;
+    Bit_Pantalla: TSpeedButton;
+    Bit_Printe: TSpeedButton;
+    SpeedButton6: TSpeedButton;
+    Panel2: TPanel;
+    FactnoAsiento: TQuickRep;
+    QRBand1: TQRBand;
+    QRDBText2: TQRDBText;
+    QRDBText3: TQRDBText;
+    QRDBText4: TQRDBText;
+    QRLabel7: TQRLabel;
+    QRDBText5: TQRDBText;
+    QRLabel8: TQRLabel;
+    QRDBText6: TQRDBText;
+    QRLabel9: TQRLabel;
+    QRLabel19: TQRLabel;
+    QRLabel26: TQRLabel;
+    QRSysData5: TQRSysData;
+    QRSysData6: TQRSysData;
+    QRLabel1: TQRLabel;
+    QRBand2: TQRBand;
+    QRShape1: TQRShape;
+    QRLabel27: TQRLabel;
+    QRLabel28: TQRLabel;
+    QRLabel29: TQRLabel;
+    QRLabel30: TQRLabel;
+    QRLabel31: TQRLabel;
+    QRBand3: TQRBand;
+    QRDBText8: TQRDBText;
+    QRDBText9: TQRDBText;
+    QRDBText10: TQRDBText;
+    QRDBText28: TQRDBText;
+    QRBand4: TQRBand;
+    QRLabel32: TQRLabel;
+    QRDBText1: TQRDBText;
+    procedure Bit_PantallaClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure SpeedButton6Click(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frr_CobroNoAsentado: TFrr_CobroNoAsentado;
+
+implementation
+
+uses TABLAS;
+
+{$R *.dfm}
+
+procedure TFrr_CobroNoAsentado.Bit_PantallaClick(Sender: TObject);
+begin
+      Dtm.TBL_CONSULTA.SQL.Clear;
+      Dtm.TBL_CONSULTA.SQL.Add('SELECT * FROM TBL_CONTCOBRO A, DATAELECTROSOFT.Dbo.TBL_CLIENTE B');
+      Dtm.TBL_CONSULTA.SQL.Add('WHERE A.CODCLIENTE = B.CODIGO AND A.ASIENTO = :ASIENTO AND  A.FECHAPAGO BETWEEN :FECHA1 AND :FECHA2');
+      Dtm.TBL_CONSULTA.SQL.Add('ORDER BY A.SECUENCIA,B.NOMBRE,B.APELLIDO');
+      Dtm.TBL_CONSULTA.ParamByName('FECHA1').ASDATE := FECHA1.Date;
+      Dtm.TBL_CONSULTA.ParamByName('FECHA2').ASDATE := FECHA2.DATE;
+      Dtm.TBL_CONSULTA.ParamByName('ASIENTO').AsString    := 'No';
+      TRY
+      Dtm.TBL_CONSULTA.ACTIVE := TRUE;
+      EXCEPT
+      MESSAGEDLG('Verifique su Consulta',MTCONFIRMATION,[MBOK],0);
+      END;
+     IF Dtm.TBL_CONSULTA.Eof THEN
+        BEGIN
+          MESSAGEDLG('NO EXISTEN REGISTRO DE VENTAS',MTCONFIRMATION,[MBOK],0);
+          ABORT;
+        END;
+        QRLabel1.Caption := 'Desde '+DATETOSTR(FECHA1.DATE)+' Hasta '+DATETOSTR(FECHA2.Date);
+         IF Sender = Bit_Pantalla THEN
+           BEGIN
+            FactnoAsiento.Preview;
+           END;
+        IF Sender = Bit_Printe THEN
+           BEGIN
+            FactnoAsiento.Print;
+           END;
+
+end;
+
+procedure TFrr_CobroNoAsentado.FormCreate(Sender: TObject);
+begin
+   Frr_CobroNoAsentado.Top    := 97;
+   Frr_CobroNoAsentado.LEFT   := 04;
+   FECHA1.DateTime            := DATE-90;
+   FECHA2.DateTime            := DATE;
+end;
+
+procedure TFrr_CobroNoAsentado.SpeedButton6Click(Sender: TObject);
+begin
+ Close;
+end;
+
+end.

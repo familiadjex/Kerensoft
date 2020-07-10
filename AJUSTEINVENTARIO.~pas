@@ -1,0 +1,415 @@
+unit AJUSTEINVENTARIO;
+
+interface
+
+uses
+  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
+  Dialogs, ComCtrls, Grids, DBGrids, Buttons, ToolWin, ExtCtrls, StdCtrls,
+  Mask, DBCtrls,DB;
+
+type
+  TFrm_AjusteInventario = class(TForm)
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    Bevel1: TBevel;
+    Bevel2: TBevel;
+    CoolBar1: TCoolBar;
+    CoolBar2: TCoolBar;
+    Bit_Ayuda: TSpeedButton;
+    Bit_Buscar: TSpeedButton;
+    Bit_Grabar: TSpeedButton;
+    Bit_Nuevo: TSpeedButton;
+    Bit_Eliminar: TSpeedButton;
+    Bit_Salir: TSpeedButton;
+    StatusBar1: TStatusBar;
+    TabSheet2: TTabSheet;
+    DBGrid1: TDBGrid;
+    Dbg_Ajuste: TDBGrid;
+    FECHA1: TDateTimePicker;
+    Label1: TLabel;
+    Label2: TLabel;
+    DBEdit1: TDBEdit;
+    Bit_Asentar: TSpeedButton;
+    Label3: TLabel;
+    DBComboBox1: TDBComboBox;
+    Bevel3: TBevel;
+    Bevel4: TBevel;
+    RichEdit1: TRichEdit;
+    Label4: TLabel;
+    Bevel5: TBevel;
+    procedure Bit_NuevoClick(Sender: TObject);
+    procedure Bit_SalirClick(Sender: TObject);
+    procedure Bit_EliminarClick(Sender: TObject);
+    procedure Bit_GrabarClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure Dbg_AjusteEditButtonClick(Sender: TObject);
+    procedure Dbg_AjusteKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Bit_AsentarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  Frm_AjusteInventario: TFrm_AjusteInventario;
+
+implementation
+
+uses BuscaMercancia, BUSCACATALOGO, TABLAS;
+
+
+
+{$R *.dfm}
+
+procedure TFrm_AjusteInventario.Bit_NuevoClick(Sender: TObject);
+begin
+   Dtm.Conexiones.BeginTrans;
+   TRY
+   Dtm.TBL_Maximo.SQL.Clear;
+   Dtm.TBL_Maximo.SQL.Add('SELECT MAX(SECUENCIA) AS TREGISTRO FROM TBL_CONTAJUSTE');
+   Dtm.TBL_Maximo.Active := TRUE;
+   IF NOT Dtm.TBL_CONTAJUSTE.Locate('SECUENCIA',Dtm.TBL_MaximoTregistro.Value+1,[loPartialKey]) THEN
+      BEGIN
+      Dtm.TBL_CONTAJUSTE.Insert;
+      Dtm.TBL_CONTAJUSTESECUENCIA.VALUE      := Dtm.TBL_MaximoTregistro.Value+1;
+      Dtm.TBL_CONTAJUSTEFECHA.Value          := DATE;
+      Dtm.TBL_CONTAJUSTESECUENCIA.Alignment  := taLeftJustify;
+      DBEdit1.DataField                      := 'SECUENCIA';
+      DBComboBox1.DataField                  := 'TIPO';
+
+      Dtm.TBL_DETAJUSTE.MasterSource         := Dtm.DTS_CONTAJUSTE;
+      Dtm.TBL_DETAJUSTE.MasterFields         := 'SECUENCIA';
+      Dbg_Ajuste.DataSource                  := Dtm.DTS_DETAJUSTE;
+
+      Dbg_Ajuste.Options                     := [dgEditing,dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgAlwaysShowSelection,dgConfirmDelete,dgCancelOnExit,dgMultiSelect];
+      Bit_Nuevo.Enabled   := False;
+      DBComboBox1.Enabled := TRUE;
+      Bit_Eliminar.Enabled:= TRUE;
+      Bit_Asentar.Enabled := TRUE;
+      Dtm.TBL_CONTAJUSTE.Post;
+      Dtm.Conexiones.CommitTrans;
+      END;
+      Dtm.TBL_Maximo.Close;
+    EXCEPT
+    Dtm.Conexiones.RollbackTrans;
+    END;
+end;
+
+procedure TFrm_AjusteInventario.Bit_SalirClick(Sender: TObject);
+begin
+  Close;
+end;
+
+procedure TFrm_AjusteInventario.Bit_EliminarClick(Sender: TObject);
+begin
+ IF Dtm.TBL_DETAJUSTE.State IN [dsEdit, dsInsert] THEN
+    BEGIN
+     IF MessageDlg('Desea Eliminar Registro',mtConfirmation, [mbYES, mbNO], 0) = mrYes then
+       BEGIN
+         Dtm.Conexiones.BeginTrans;
+         TRY
+         Dtm.TBL_DETAJUSTE.EDIT;
+         Dtm.TBL_DETAJUSTE.DELETE;
+         Dtm.Conexiones.CommitTrans;
+         EXCEPT
+         Dtm.Conexiones.RollbackTrans;
+         END;
+       END;
+     END
+     ELSE
+     BEGIN
+       APPLICATION.MessageBox('Registro no está en modo editado','A v i s o',MB_DEFBUTTON1 + MB_IconWarning);
+     END;
+
+end;
+
+procedure TFrm_AjusteInventario.Bit_GrabarClick(Sender: TObject);
+begin
+    IF Dtm.TBL_CONTAJUSTEASIENTO.AsString = 'Si' THEN
+      BEGIN
+        APPLICATION.MessageBox('Inventario está Asentada, No Modificable','A v i s o',MB_DEFBUTTON1 + MB_IconWarning);
+        Abort;
+      END;
+        Dtm.Conexiones.BeginTrans;
+        TRY
+        Dtm.TBL_DETAJUSTE.EDIT;
+        Dtm.TBL_DETAJUSTEFECHA.Value := FECHA1.DATE;
+        Dtm.TBL_DETAJUSTE.POST;
+        Dtm.Conexiones.CommitTrans;
+        EXCEPT
+        Dtm.Conexiones.RollbackTrans;
+        END;
+
+        Dtm.Conexiones.BeginTrans;
+        TRY
+        Dtm.TBL_CONTAJUSTE.EDIT;
+        Dtm.TBL_CONTAJUSTEFECHA.Value      := FECHA1.DATE;
+        Dtm.TBL_CONTAJUSTECOMENTARIO.Value := RichEdit1.Text;
+        Dtm.TBL_CONTAJUSTE.Post;
+        Dtm.Conexiones.CommitTrans;
+        EXCEPT
+        Dtm.Conexiones.RollbackTrans;
+        END;
+
+        Dbg_Ajuste.SelectedIndex     := 0;
+        Bit_Asentar.Enabled          := TRUE;
+end;
+
+procedure TFrm_AjusteInventario.FormCreate(Sender: TObject);
+begin
+       FRM_AjusteInventario.Top    := 97;
+       FRM_AjusteInventario.LEFT   := 04;
+       FECHA1.DateTime        := DATE;
+
+    IF NOT Dtm.TBL_CONTAJUSTE.Active THEN
+       BEGIN
+        Dtm.TBL_CONTAJUSTE.Active := TRUE;
+       END;
+
+     IF NOT Dtm.TBL_DETAJUSTE.Active THEN
+       BEGIN
+        Dtm.TBL_DETAJUSTE.Active := TRUE;
+       END;
+
+     IF NOT Dtm.TBL_CATALOGO.Active THEN
+       BEGIN
+        Dtm.TBL_CATALOGO.Active := TRUE;
+       END;
+     IF NOT Dtm.TBL_COMPANIA.Active THEN
+       BEGIN
+        Dtm.TBL_COMPANIA.Active := TRUE;
+       END;
+     IF NOT Dtm.Tbl_ALMACEN.Active THEN
+       BEGIN
+        Dtm.TBL_ALMACEN.Active := TRUE;
+       END;
+     IF NOT Dtm.Tbl_INVENTALMACEN.Active THEN
+       BEGIN
+        Dtm.TBL_INVENTALMACEN.Active := TRUE;
+       END;
+end;
+
+procedure TFrm_AjusteInventario.Dbg_AjusteEditButtonClick(Sender: TObject);
+begin
+      IF DBComboBox1.Text = '' THEN
+         BEGIN
+         APPLICATION.MessageBox('Tipo Está en Blanco','A v i s o',MB_DEFBUTTON1 + MB_IconWarning);
+         Abort;
+         END;
+    IF DBComboBox1.Text = 'Sumar' THEN
+       BEGIN
+       Dtm.TBL_CONSULTA.SQL.Clear;
+       BuscarMercancia.WBUSCAR.Clear;
+       BuscarMercancia.SHOWMODAL;
+       IF BuscarMercancia.ModalResult = MROK THEN
+          BEGIN
+      IF Dtm.TBL_CATALOGO.LOCATE('CODIGO',Dtm.TBL_CONSULTA.FieldByName('CODIGO').AsString,[loPartialKey]) THEN
+             BEGIN
+             Dtm.TBL_CATALOGO.Edit;
+             IF NOT Dtm.TBL_DETAJUSTE.Locate('SECUENCIA;CODPRODUCTO',VarArrayOf([DBEDIT1.Text,Dtm.TBL_CONSULTA.FieldByName('CODIGO').AsString]),[loPartialKey])  THEN
+                BEGIN
+                Dtm.Conexiones.BeginTrans;
+                TRY
+                Dtm.TBL_DETAJUSTE.INSERT;
+                Dtm.TBL_DETAJUSTESECUENCIA.AsStrinig    := DBEDIT1.Text;
+                Dtm.TBL_DETAJUSTECODPRODUCTO.AsString  := Dtm.TBL_CONSULTA.FieldByName('CODIGO').AsString;
+                Dtm.TBL_DETAJUSTEDESCRIPCION.VALUE     := Dtm.TBL_CONSULTA.FieldByName('DESCRIPCION').AsString;
+                Dtm.TBL_DETAJUSTECODALMACEN.ReadOnly   := False;
+                Dtm.TBL_DETAJUSTECODALMACEN.Value      := 1;
+                Dtm.TBL_DETAJUSTEFECHA.Value           := DATE;
+                Dbg_Ajuste.SelectedIndex               := 2;
+                Dtm.Conexiones.CommitTrans;
+                EXCEPT
+                Dtm.Conexiones.RollbackTrans;
+                END;
+                END
+                ELSE
+                BEGIN
+                Dtm.TBL_DETAJUSTE.EDIT;
+                END;
+             END;
+           END;
+        END;
+
+        // cuando rebaja debe traer el almacen
+
+    IF DBComboBox1.Text = 'Restar' THEN
+       BEGIN
+       Dtm.TBL_CONSULTA.SQL.Clear;
+       BuscarCatalogo.WBUSCAR.Clear;
+       BuscarCatalogo.SHOWMODAL;
+       IF BuscarCatalogo.ModalResult = MROK THEN
+          BEGIN
+      IF Dtm.TBL_CATALOGO.LOCATE('CODIGO',Dtm.TBL_CONSULTA.FieldByName('CODIGO').AsString,[loPartialKey]) THEN
+             BEGIN
+             Dtm.TBL_CATALOGO.Edit;
+             IF NOT Dtm.TBL_DETAJUSTE.Locate('SECUENCIA;CODPRODUCTO',VarArrayOf([DBEDIT1.Text,Dtm.TBL_CONSULTA.FieldByName('CODIGO').Value]),[loPartialKey]) THEN
+                BEGIN
+                Dtm.TBL_DETAJUSTE.INSERT;
+                Dtm.TBL_DETAJUSTECODALMACEN.ReadOnly:= False;
+                Dtm.TBL_DETAJUSTESECUENCIA.ASSTRING := DBEDIT1.TEXT;
+                Dtm.TBL_DETAJUSTECODPRODUCTO.VALUE  := Dtm.TBL_CONSULTA['CODIGO'];
+                Dtm.TBL_DETAJUSTEDESCRIPCION.VALUE  := Dtm.TBL_CONSULTA['DESCRIPCION'];
+                Dtm.TBL_DETAJUSTECODALMACEN.Value   := Dtm.TBL_CONSULTA['CODALMACEN'];
+                Dtm.TBL_DETAJUSTECODALMACEN.ReadOnly:= True;
+                Dtm.TBL_DETAJUSTEFECHA.Value        := DATE;
+                Dbg_Ajuste.SelectedIndex            := 2;
+                END
+                ELSE
+                BEGIN
+                Dtm.TBL_DETAJUSTE.EDIT;
+                END;
+             END;
+           END;
+         END;
+
+end;
+
+procedure TFrm_AjusteInventario.Dbg_AjusteKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+    IF (KEY = 13) AND (Dbg_Ajuste.SelectedIndex = 0) THEN
+       BEGIN
+       IF Dtm.TBL_CATALOGO.Locate('CODIGO',Dbg_Ajuste.SelectedField.Value,[loPartialKey]) THEN
+          BEGIN
+             Dtm.TBL_CATALOGO.Edit;
+             IF NOT Dtm.TBL_DETAJUSTE.Locate('SECUENCIA;CODPRODUCTO',VarArrayOf([DBEDIT1.Text,Dtm.TBL_CATALOGO.FieldByName('CODIGO').Value]),[loPartialKey]) THEN
+                BEGIN
+                Dtm.TBL_DETAJUSTE.INSERT;
+                Dtm.TBL_DETAJUSTESECUENCIA.ASSTRING   := DBEDIT1.TEXT;
+                Dtm.TBL_DETAJUSTECODALMACEN.VALUE   := Dtm.TBL_CLIENTECodigo.VALUE;
+                Dtm.TBL_DETAJUSTECODPRODUCTO.VALUE  := Dtm.TBL_CATALOGOCODIGO.Value;
+                Dtm.TBL_DETAJUSTEDESCRIPCION.VALUE  := Dtm.TBL_CATALOGODESCRIPCION.Value;
+                Dbg_Ajuste.SelectedIndex := 2;
+                END
+                ELSE
+                BEGIN
+                Dtm.TBL_DETAJUSTE.EDIT;
+                END;
+          END;
+          Dbg_Ajuste.SelectedIndex := 2;
+          KEY := 0;
+    END;
+    IF (KEY = 13) AND (Dbg_Ajuste.SelectedIndex = 2) THEN
+       BEGIN
+        Dbg_Ajuste.SelectedIndex := 3;
+        KEY := 0;
+       END;
+    IF (KEY = 13) AND (Dbg_Ajuste.SelectedIndex = 3) then
+        BEGIN
+         Dbg_Ajuste.SelectedIndex := 4;
+         KEY := 0;
+        END;
+    IF (KEY = 13) AND (Dbg_Ajuste.SelectedIndex = 4) then
+        BEGIN
+         Dbg_Ajuste.SelectedIndex := 5;
+         KEY := 0;
+        END;
+
+    IF (KEY = 13) AND (Dbg_Ajuste.SelectedIndex = 5) then
+        BEGIN
+         Dtm.TBL_DETAJUSTE.EDIT;
+         Dtm.TBL_DETAJUSTEFECHA.Value   := FECHA1.DATE;
+         Dtm.TBL_DETAJUSTE.POST;
+         Bit_Grabar.Enabled           := TRUE;
+         Bit_Grabar.Click;
+         KEY := 0;
+        END;
+
+end;
+
+procedure TFrm_AjusteInventario.Bit_AsentarClick(Sender: TObject);
+begin
+
+      IF DBComboBox1.Text = '' THEN
+         BEGIN
+         APPLICATION.MessageBox('Tipo Está en Blanco','A v i s o',MB_DEFBUTTON1 + MB_IconWarning);
+         Abort;
+         END;
+              Dtm.TBL_DETAJUSTE.First;
+       WHILE NOT Dtm.TBL_DETAJUSTE.Eof DO
+             BEGIN
+      IF Dtm.TBL_CATALOGO.LOCATE('CODIGO',Dtm.TBL_DETAJUSTE.FieldByName('CODPRODUCTO').AsString,[loPartialKey]) THEN
+             BEGIN
+                Dtm.Conexiones.BeginTrans;
+                TRY
+             IF TRIMRIGHT(DBComboBox1.Text) = 'Sumar' THEN
+                BEGIN
+                Dtm.TBL_CATALOGO.Edit;
+                Dtm.TBL_CATALOGOEXISTENCIA.Value := Dtm.TBL_CATALOGOEXISTENCIA.Value + (Dtm.TBL_DETAJUSTECANTIDAD.Value);
+                Dtm.TBL_CATALOGO.Post;
+                END;
+             IF TRIMRIGHT(DBComboBox1.Text) = 'Restar' THEN
+                BEGIN
+                Dtm.TBL_CATALOGO.Edit;
+                Dtm.TBL_CATALOGOEXISTENCIA.Value := Dtm.TBL_CATALOGOEXISTENCIA.Value - (Dtm.TBL_DETAJUSTECANTIDAD.Value);
+                Dtm.TBL_CATALOGO.Post;
+                END;
+                Dtm.Conexiones.CommitTrans;
+                EXCEPT
+                Dtm.Conexiones.RollbackTrans;
+                END;
+
+             END;
+          IF NOT Dtm.TBL_INVENTALMACEN.Locate('CODALMACEN;CODPRODUCTO',VarArrayOf([Dtm.TBL_DETAJUSTE.FieldByName('CODALMACEN').AsString,Dtm.TBL_DETAJUSTE.FieldByName('CODPRODUCTO').AsString]),[loPartialKey]) THEN
+             BEGIN
+                Dtm.Conexiones.BeginTrans;
+                TRY
+                Dtm.TBL_INVENTALMACEN.INSERT;
+                Dtm.TBL_INVENTALMACEN['CODALMACEN']  := Dtm.TBL_DETAJUSTECODALMACEN.AsString;
+                Dtm.TBL_INVENTALMACEN['CODPRODUCTO'] := Dtm.TBL_DETAJUSTECODPRODUCTO.AsString;
+                Dtm.TBL_INVENTALMACENCOSTO.Value     := Dtm.TBL_DETAJUSTECOSTO.Value;
+                Dtm.TBL_INVENTALMACEN.Post;
+                Dtm.Conexiones.CommitTrans;
+                EXCEPT
+                Dtm.Conexiones.RollbackTrans;
+                END;
+
+             END;
+          IF Dtm.TBL_INVENTALMACEN.Locate('CODALMACEN;CODPRODUCTO',VarArrayOf([Dtm.TBL_DETAJUSTE.FieldByName('CODALMACEN').AsString,Dtm.TBL_DETAJUSTE.FieldByName('CODPRODUCTO').AsString]),[loPartialKey]) THEN
+             BEGIN
+               IF TRIMRIGHT(DBComboBox1.Text) = 'Sumar' THEN
+                  BEGIN
+                  Dtm.Conexiones.BeginTrans;
+                  TRY
+                  Dtm.TBL_INVENTALMACEN.Edit;
+                  Dtm.TBL_INVENTALMACENEXISTENCIA.Value := Dtm.TBL_INVENTALMACENEXISTENCIA.Value + (Dtm.TBL_DETAJUSTECANTIDAD.Value);
+                  Dtm.TBL_INVENTALMACENSALIDA.Value     := Dtm.TBL_INVENTALMACENSALIDA.Value + (Dtm.TBL_DETAJUSTECANTIDAD.Value);
+                  Dtm.TBL_INVENTALMACEN.Post;
+                  Dtm.Conexiones.CommitTrans;
+                  EXCEPT
+                  Dtm.Conexiones.RollbackTrans;
+                  END;
+
+                  END;
+               IF TRIMRIGHT(DBComboBox1.Text) = 'Restar' THEN
+                  BEGIN
+                  Dtm.Conexiones.BeginTrans;
+                  TRY
+                  Dtm.TBL_INVENTALMACEN.Edit;
+                  Dtm.TBL_INVENTALMACENEXISTENCIA.Value := Dtm.TBL_INVENTALMACENEXISTENCIA.Value - (Dtm.TBL_DETAJUSTECANTIDAD.Value);
+                  Dtm.TBL_INVENTALMACENSALIDA.Value     := Dtm.TBL_INVENTALMACENSALIDA.Value - (Dtm.TBL_DETAJUSTECANTIDAD.Value);
+                  Dtm.TBL_INVENTALMACEN.Post;
+                  Dtm.Conexiones.CommitTrans;
+                  EXCEPT
+                  Dtm.Conexiones.RollbackTrans;
+                  END;
+                  END;
+
+             END;
+              Dtm.TBL_DETAJUSTE.NEXT;
+         END;
+         Bit_Nuevo.Enabled   := TRUE;
+         DBComboBox1.Enabled := FALSE;
+         Bit_Eliminar.Enabled:= FALSE;
+         Bit_Asentar.Enabled := FALSE;
+
+         Dbg_Ajuste.Options := [dgTitles,dgIndicator,dgColumnResize,dgColLines,dgRowLines,dgTabs,dgRowSelect,dgAlwaysShowSelection,dgConfirmDelete,dgCancelOnExit,dgMultiSelect];
+         APPLICATION.MessageBox('Ajuste Asentada','A v i s o',MB_DEFBUTTON1 + MB_IconInformation);
+
+
+end;
+
+end.

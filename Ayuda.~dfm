@@ -1,0 +1,169 @@
+object Frm_Ayuda: TFrm_Ayuda
+  Left = 192
+  Top = 107
+  Width = 775
+  Height = 609
+  VertScrollBar.Style = ssFlat
+  BorderIcons = []
+  BorderStyle = bsSizeToolWin
+  Caption = 'Kerensoft - Ayuda'
+  Color = clInfoBk
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  PrintScale = poNone
+  PixelsPerInch = 96
+  TextHeight = 13
+  object RichEdit1: TRichEdit
+    Left = 0
+    Top = 0
+    Width = 769
+    Height = 577
+    Lines.Strings = (
+      
+        'La conciliaci'#243'n bancaria es un proceso que permite confrontar y ' +
+        'conciliar los valores que la empresa tiene registrados, de una c' +
+        'uenta de ahorros o corriente, '
+      
+        'con los valores que el banco suministra por medio del extracto b' +
+        'ancario.'
+      ''
+      
+        'Las empresas tiene un libro auxiliar de bancos en el cual regist' +
+        'ra cada uno de los movimientos hechos en una cuenta bancaria, co' +
+        'mo son el giro de cheques, '
+      
+        'consignaciones, notas debito, notas cr'#233'dito, anulaci'#243'n de cheque' +
+        's y consignaciones, etc.'
+      ''
+      
+        'La entidad financiera donde se encuentra la respectiva cuenta, h' +
+        'ace lo suyo llevando un registro completo de cada movimiento que' +
+        ' el cliente (la empresa), '
+      'hace en su cuenta.'
+      ''
+      
+        'Mensualmente, el banco env'#237'a a la empresa un extracto en el que ' +
+        'se muestran todos esos movimientos que concluyen en un saldo de ' +
+        'la cuenta al '#250'ltimo d'#237'a '
+      'del respectivo mes.'
+      ''
+      
+        'Por lo general, el saldo del extracto bancario nunca coincide co' +
+        'n el saldo que la empresa tiene en sus libros auxiliares, por lo' +
+        ' que es preciso identificar las '
+      'diferencias y las causas por las que esos valores no coinciden.'
+      ''
+      
+        'El proceso de verificaci'#243'n y confrontaci'#243'n, es el que conocemos ' +
+        'como conciliaci'#243'n bancaria, proceso que consiste en revisar y co' +
+        'nfrontar cada uno de los '
+      
+        'movimientos registrados en los auxiliares, con los valores conte' +
+        'nidos en el extracto bancario para determinar cual es la causa d' +
+        'e la diferencia.'
+      ''
+      
+        'Entre las causas m'#225's comunes que conllevan a que los valores de ' +
+        'los libros auxiliares y el extracto bancario no coincidan, tenem' +
+        'os:'
+      ''
+      
+        '- Cheques girados por la empresa y que no han sido cobrados por ' +
+        'el beneficiario del cheque.'
+      ''
+      
+        '- Consignaciones registradas en los libros auxiliares pero que e' +
+        'l banco aun no las ha abonado a la cuenta de la empresa.'
+      ''
+      
+        '- Notas debito que el banco ha cargado a la cuenta bancaria y qu' +
+        'e la empresa no ha registrado en su auxiliar.'
+      ''
+      
+        '- Notas cr'#233'dito que el banco ha abonado a la cuenta de la empres' +
+        'a y que '#233'sta aun no las ha registrado en sus auxiliares.'
+      ''
+      
+        '- Errores de la empresa al memento de registrar los conceptos y ' +
+        'valores en el libro auxiliar.'
+      ''
+      '- Errores del banco al liquidar determinados conceptos.'
+      ''
+      
+        'Para realizar la conciliaci'#243'n, lo m'#225's c'#243'modo y seguro, es inicia' +
+        'r tomando como base o punto de partida, el saldo presente en el ' +
+        'extracto bancario, pues es el '
+      
+        'que oficialmente emite el banco, el cual contiene los movimiento' +
+        's y estado de la cuenta, valores que pueden ser m'#225's confiables q' +
+        'ue los que tiene la empresa.'
+      ''
+      
+        'En este orden de ideas, la estructura de la conciliaci'#243'n bancari' +
+        'a podr'#237'a ser:'
+      ''
+      'Saldo del extracto bancario:           XXX'
+      ''
+      '(-) Cheques pendientes de cobro:   XXX'
+      ''
+      '(-) Notas cr'#233'dito no registradas    XXX'
+      ''
+      '(+) Consignaciones pendientes     XXX'
+      ''
+      '(+) Notas debito no registradas    XXX'
+      ''
+      '('#177') Errores en el auxiliar              XXX'
+      ''
+      '= Saldo en libros.                      XXX'
+      ''
+      
+        'Recordemos que en este caso, las notas debito significan una ero' +
+        'gaci'#243'n para la empresa, puesto que una nota debito significa un ' +
+        'ingreso para quien la emite, '
+      
+        'que en este caso es el banco, quien bien la puede emitir por el ' +
+        'cobro de la cuota de manejo de la cuenta, por la chequera, etc.'
+      ''
+      
+        'Las notas cr'#233'dito significan un ingreso para la empresa, puesto ' +
+        'que una nota cr'#233'dito significa un egreso para quien la emite, es' +
+        ' decir el banco, el cual la '
+      'puede emitir por pago de intereses, por ejemplo.'
+      ''
+      
+        'En el caso de los errores, se restan los que disminuyen en los a' +
+        'uxiliares, y se suman aquellos que suman en los auxiliares, de e' +
+        'sta forma, partiendo del saldo '
+      'del extracto, se llega al saldo que figura en el auxiliar.'
+      ''
+      
+        'Una ves identificados los conceptos y valores que causan la dife' +
+        'rencia, se procede a realizar los respectivos ajustes, con el ob' +
+        'jetivo de corregir las '
+      'inconsistencias y los errores encontrados.'
+      ''
+      
+        'En le eventualidad que el error sea del banco (algo que no es co' +
+        'm'#250'n), se debe hacer la respectiva reclamaci'#243'n, y si se trata de ' +
+        'un valor considerable, '
+      
+        'entonces se debe proceder a contabilizar esta reclamaci'#243'n que es' +
+        ' un derecho a favor de la empresa, y como tal se debe contabiliz' +
+        'ar.'
+      ''
+      
+        'La conciliaci'#243'n no busca que ning'#250'n momento '#8220'legalizar'#8221' los erro' +
+        'res; la conciliaci'#243'n bancaria es un mecanismo que permite identi' +
+        'ficar las diferencias y sus '
+      
+        'causas, para luego proceder a realizar los respectivos ajustes y' +
+        ' correcciones.'
+      '')
+    ScrollBars = ssVertical
+    TabOrder = 0
+  end
+end

@@ -1,0 +1,451 @@
+object Frm_AjusteInventario: TFrm_AjusteInventario
+  Left = 230
+  Top = 161
+  Width = 648
+  Height = 459
+  BorderStyle = bsSizeToolWin
+  Caption = 'Kerensoft - Registrar Ajuste Inventario'
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -11
+  Font.Name = 'MS Sans Serif'
+  Font.Style = []
+  OldCreateOrder = False
+  OnCreate = FormCreate
+  PixelsPerInch = 96
+  TextHeight = 13
+  object Bevel1: TBevel
+    Left = 1
+    Top = 0
+    Width = 590
+    Height = 400
+  end
+  object PageControl1: TPageControl
+    Left = 4
+    Top = 3
+    Width = 584
+    Height = 393
+    ActivePage = TabSheet1
+    TabOrder = 0
+    object TabSheet1: TTabSheet
+      Caption = 'Registro'
+      object Bevel5: TBevel
+        Left = 405
+        Top = 32
+        Width = 170
+        Height = 51
+        Shape = bsFrame
+      end
+      object Bevel2: TBevel
+        Left = 0
+        Top = 1
+        Width = 575
+        Height = 363
+      end
+      object Label1: TLabel
+        Left = 409
+        Top = 39
+        Width = 30
+        Height = 13
+        Caption = 'Fecha'
+      end
+      object Label2: TLabel
+        Left = 8
+        Top = 11
+        Width = 39
+        Height = 13
+        Caption = 'Proceso'
+      end
+      object Label3: TLabel
+        Left = 409
+        Top = 60
+        Width = 21
+        Height = 13
+        Caption = 'Tipo'
+      end
+      object Bevel3: TBevel
+        Left = 1
+        Top = 325
+        Width = 319
+        Height = 37
+      end
+      object Bevel4: TBevel
+        Left = 323
+        Top = 325
+        Width = 252
+        Height = 37
+      end
+      object Label4: TLabel
+        Left = 8
+        Top = 35
+        Width = 53
+        Height = 13
+        Caption = 'Comentario'
+      end
+      object Dbg_Ajuste: TDBGrid
+        Left = 0
+        Top = 86
+        Width = 575
+        Height = 234
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+        OnEditButtonClick = Dbg_AjusteEditButtonClick
+        OnKeyDown = Dbg_AjusteKeyDown
+        Columns = <
+          item
+            ButtonStyle = cbsEllipsis
+            Color = clAqua
+            Expanded = False
+            FieldName = 'CODPRODUCTO'
+            Title.Caption = 'C'#243'digo'
+            Width = 51
+            Visible = True
+          end
+          item
+            ButtonStyle = cbsNone
+            Expanded = False
+            FieldName = 'DESCRIPCION'
+            ReadOnly = True
+            Title.Caption = 'Descripci'#243'n'
+            Width = 255
+            Visible = True
+          end
+          item
+            Color = clOlive
+            Expanded = False
+            FieldName = 'ALMACEN'
+            Title.Caption = 'Alm'
+            Width = 46
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CANTIDAD'
+            Title.Caption = 'Cantidad'
+            Width = 52
+            Visible = True
+          end
+          item
+            Color = clLime
+            Expanded = False
+            FieldName = 'COSTO'
+            Title.Caption = 'Costo'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'FECHA'
+            ReadOnly = True
+            Title.Caption = 'Fecha'
+            Width = 68
+            Visible = True
+          end>
+      end
+      object FECHA1: TDateTimePicker
+        Left = 453
+        Top = 36
+        Width = 118
+        Height = 21
+        Date = 39647.441562129630000000
+        Time = 39647.441562129630000000
+        TabOrder = 1
+      end
+      object DBEdit1: TDBEdit
+        Left = 65
+        Top = 10
+        Width = 121
+        Height = 21
+        BevelKind = bkSoft
+        BorderStyle = bsNone
+        DataSource = Dtm.DTS_CONTAJUSTE
+        TabOrder = 2
+      end
+      object DBComboBox1: TDBComboBox
+        Left = 453
+        Top = 58
+        Width = 118
+        Height = 21
+        DataSource = Dtm.DTS_CONTAJUSTE
+        ItemHeight = 13
+        Items.Strings = (
+          'Sumar'
+          'Restar')
+        TabOrder = 3
+      end
+      object RichEdit1: TRichEdit
+        Left = 65
+        Top = 33
+        Width = 339
+        Height = 51
+        BevelKind = bkSoft
+        BorderStyle = bsNone
+        TabOrder = 4
+      end
+    end
+    object TabSheet2: TTabSheet
+      Caption = 'Almacen'
+      ImageIndex = 1
+      object DBGrid1: TDBGrid
+        Left = 0
+        Top = 0
+        Width = 529
+        Height = 364
+        Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgRowSelect, dgConfirmDelete, dgCancelOnExit]
+        TabOrder = 0
+        TitleFont.Charset = DEFAULT_CHARSET
+        TitleFont.Color = clWindowText
+        TitleFont.Height = -11
+        TitleFont.Name = 'MS Sans Serif'
+        TitleFont.Style = []
+        Columns = <
+          item
+            Color = clAqua
+            Expanded = False
+            FieldName = 'SECUENCIA'
+            Title.Caption = 'Secuencia'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CODPRODUCTO'
+            Title.Caption = 'C'#242'digo'
+            Width = 77
+            Visible = True
+          end
+          item
+            Color = clTeal
+            Expanded = False
+            FieldName = 'CODALMACEN'
+            Title.Caption = 'Alm'
+            Width = 87
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'CANTIDAD'
+            Title.Caption = 'Cantidad'
+            Width = 86
+            Visible = True
+          end
+          item
+            Color = clGreen
+            Expanded = False
+            FieldName = 'COSTO'
+            Title.Caption = 'Costo'
+            Visible = True
+          end
+          item
+            Expanded = False
+            FieldName = 'FECHA'
+            Title.Caption = 'Fecha'
+            Visible = True
+          end>
+      end
+    end
+  end
+  object CoolBar1: TCoolBar
+    Left = 596
+    Top = 0
+    Width = 39
+    Height = 400
+    Align = alCustom
+    Bands = <
+      item
+        Control = CoolBar2
+        ImageIndex = -1
+        MinHeight = 35
+        Width = 396
+      end>
+    Vertical = True
+    object CoolBar2: TCoolBar
+      Left = 0
+      Top = 9
+      Width = 35
+      Height = 387
+      Bands = <>
+      object Bit_Ayuda: TSpeedButton
+        Left = 2
+        Top = 2
+        Width = 27
+        Height = 25
+        Hint = 'Ayuda'
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333FFFFF3333333333F797F3333333333F737373FF333333BFB999BFB
+          33333337737773773F3333BFBF797FBFB33333733337333373F33BFBFBFBFBFB
+          FB3337F33333F33337F33FBFBFB9BFBFBF3337333337F333373FFBFBFBF97BFB
+          FBF37F333337FF33337FBFBFBFB99FBFBFB37F3333377FF3337FFBFBFBFB99FB
+          FBF37F33333377FF337FBFBF77BF799FBFB37F333FF3377F337FFBFB99FB799B
+          FBF373F377F3377F33733FBF997F799FBF3337F377FFF77337F33BFBF99999FB
+          FB33373F37777733373333BFBF999FBFB3333373FF77733F7333333BFBFBFBFB
+          3333333773FFFF77333333333FBFBF3333333333377777333333}
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object Bit_Buscar: TSpeedButton
+        Left = 2
+        Top = 27
+        Width = 27
+        Height = 25
+        Hint = 'Buscar'
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00555555555555
+          55555555FFFFFFFFFF55555000000000055555577777777775F55500B8B8B8B8
+          B05555775F555555575F550F0B8B8B8B8B05557F75F555555575550BF0B8B8B8
+          B8B0557F575FFFFFFFF7550FBF0000000000557F557777777777500BFBFBFBFB
+          0555577F555555557F550B0FBFBFBFBF05557F7F555555FF75550F0BFBFBF000
+          55557F75F555577755550BF0BFBF0B0555557F575FFF757F55550FB700007F05
+          55557F557777557F55550BFBFBFBFB0555557F555555557F55550FBFBFBFBF05
+          55557FFFFFFFFF7555550000000000555555777777777755555550FBFB055555
+          5555575FFF755555555557000075555555555577775555555555}
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+      end
+      object Bit_Grabar: TSpeedButton
+        Left = 2
+        Top = 52
+        Width = 27
+        Height = 25
+        Hint = 'Grabar'
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          333333FFFFFFFFFFFFF33000077777770033377777777777773F000007888888
+          00037F3337F3FF37F37F00000780088800037F3337F77F37F37F000007800888
+          00037F3337F77FF7F37F00000788888800037F3337777777337F000000000000
+          00037F3FFFFFFFFFFF7F00000000000000037F77777777777F7F000FFFFFFFFF
+          00037F7F333333337F7F000FFFFFFFFF00037F7F333333337F7F000FFFFFFFFF
+          00037F7F333333337F7F000FFFFFFFFF00037F7F333333337F7F000FFFFFFFFF
+          00037F7F333333337F7F000FFFFFFFFF07037F7F33333333777F000FFFFFFFFF
+          0003737FFFFFFFFF7F7330099999999900333777777777777733}
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = Bit_GrabarClick
+      end
+      object Bit_Nuevo: TSpeedButton
+        Left = 2
+        Top = 77
+        Width = 27
+        Height = 25
+        Hint = 'Nuevo'
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000130B0000130B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF0033333333B333
+          333B33FF33337F3333F73BB3777BB7777BB3377FFFF77FFFF77333B000000000
+          0B3333777777777777333330FFFFFFFF07333337F33333337F333330FFFFFFFF
+          07333337F33333337F333330FFFFFFFF07333337F33333337F333330FFFFFFFF
+          07333FF7F33333337FFFBBB0FFFFFFFF0BB37777F3333333777F3BB0FFFFFFFF
+          0BBB3777F3333FFF77773330FFFF000003333337F333777773333330FFFF0FF0
+          33333337F3337F37F3333330FFFF0F0B33333337F3337F77FF333330FFFF003B
+          B3333337FFFF77377FF333B000000333BB33337777777F3377FF3BB3333BB333
+          3BB33773333773333773B333333B3333333B7333333733333337}
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = Bit_NuevoClick
+      end
+      object Bit_Eliminar: TSpeedButton
+        Left = 2
+        Top = 102
+        Width = 27
+        Height = 25
+        Hint = 'Eliminar'
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000130B0000130B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00333333333333
+          3333333333333333FF3333333333333003333333333333377F33333333333307
+          733333FFF333337773333C003333307733333777FF333777FFFFC0CC03330770
+          000077777FF377777777C033C03077FFFFF077FF77F777FFFFF7CC00000F7777
+          777077777777777777773CCCCC00000000003777777777777777333330030FFF
+          FFF03333F77F7F3FF3F7333C0C030F00F0F03337777F7F77373733C03C030FFF
+          FFF03377F77F7F3F333733C03C030F0FFFF03377F7737F733FF733C000330FFF
+          0000337777F37F3F7777333CCC330F0F0FF0333777337F737F37333333330FFF
+          0F03333333337FFF7F7333333333000000333333333377777733}
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = Bit_EliminarClick
+      end
+      object Bit_Salir: TSpeedButton
+        Left = 2
+        Top = 154
+        Width = 27
+        Height = 25
+        Hint = 'Salir'
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00330000000000
+          03333377777777777F333301BBBBBBBB033333773F3333337F3333011BBBBBBB
+          0333337F73F333337F33330111BBBBBB0333337F373F33337F333301110BBBBB
+          0333337F337F33337F333301110BBBBB0333337F337F33337F333301110BBBBB
+          0333337F337F33337F333301110BBBBB0333337F337F33337F333301110BBBBB
+          0333337F337F33337F333301110BBBBB0333337F337FF3337F33330111B0BBBB
+          0333337F337733337F333301110BBBBB0333337F337F33337F333301110BBBBB
+          0333337F3F7F33337F333301E10BBBBB0333337F7F7F33337F333301EE0BBBBB
+          0333337F777FFFFF7F3333000000000003333377777777777333}
+        NumGlyphs = 2
+        ParentShowHint = False
+        ShowHint = True
+        OnClick = Bit_SalirClick
+      end
+      object Bit_Asentar: TSpeedButton
+        Left = 2
+        Top = 128
+        Width = 27
+        Height = 25
+        Enabled = False
+        Flat = True
+        Glyph.Data = {
+          76010000424D7601000000000000760000002800000020000000100000000100
+          04000000000000010000120B0000120B00001000000000000000000000000000
+          800000800000008080008000000080008000808000007F7F7F00BFBFBF000000
+          FF0000FF000000FFFF00FF000000FF00FF00FFFF0000FFFFFF00550000000005
+          555555777777777FF5555500000000805555557777777777FF555550BBBBB008
+          05555557F5FFF7777FF55550B000B03080555557F77757F777F55550BBBBB033
+          00555557F55557F577555550BBBBB03305555557FFFFF7F57F55555000000033
+          05555557777777F57F555550BBBBB03305555557F5FFF7F57F555550B000B033
+          05555557F77757F57F555550BBBBB03305555557F55557F57F555550BBBBB033
+          05555557FFFFF7FF7F55550000000003055555777777777F7F55550777777700
+          05555575FF5555777F5555500B3B3B300555555775FF55577FF555555003B3B3
+          005555555775FFFF77F555555570000000555555555777777755}
+        NumGlyphs = 2
+        OnClick = Bit_AsentarClick
+      end
+    end
+  end
+  object StatusBar1: TStatusBar
+    Left = 0
+    Top = 413
+    Width = 640
+    Height = 19
+    Panels = <>
+  end
+end
